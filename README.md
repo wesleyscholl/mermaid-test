@@ -36,3 +36,17 @@ graph LR
     X --> Z
     Y --> Z
 ```
+
+
+```mermaid
+graph TD
+    A[Get store config data from PO optimization config API] -->|Data retrieved| B
+    B[Filter store config data based on isGurobiEnabled flag] -->|Filtered data| C
+    C[Pass store data to Gurobi container via env variables] -->|Data passed| D
+    D[Gurobi processes and outputs .json artifact to GCS Bucket] -->|Artifact created| E
+    E[Wait for .json artifact in GCS Bucket] -->|Artifact available| F
+    F[Read and validate .json artifact] -->|Artifact validated| G
+    G[Split .json artifact into 1MB pieces] -->|Artifact split| H
+    H[Post each piece as messages to Kafka topic]
+
+```
