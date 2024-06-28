@@ -27,4 +27,12 @@ graph LR
     O --> T
     P --> U
     Q --> U
+    R --> V
+    S --> V
+    T --> W
+    U --> W
+    V --> X
+    W --> Y
+    X --> Z
+    Y --> Z
 ```
