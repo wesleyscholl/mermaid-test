@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: sftp-download-template
+spec:
+  entrypoint: sftp-download
+  templates:
+    - name: sftp-download
+      inputs:
+        parameters:
+          - name: remoteDir
+          - name: remoteFile
+          - name: localFile
+          - name: secretName
+            default: "sftp-conn"  # default secret name
+      container:
+        image: sftp-cluster-template:latest
+        imagePullPolicy: IfNotPresent
+        command: [sh, -c]
+        args: ["lftp -e 'get -O /tmp {{inputs.parameters.remoteDir}}/{{inputs.parameters.remoteFile}} -o {{inputs.parameters.localFile}}; bye' $SFTP_CONN"]
+        env:
+          - name: SFTP_CONN
+            valueFrom:
+              secretKeyRef:
+                name: "{{inputs.parameters.secretName}}"
+                key: connstring
+      outputs:
+        artifacts:
+          - name: downloaded-file
+            path: /tmp/{{inputs.parameters.localFile}}
